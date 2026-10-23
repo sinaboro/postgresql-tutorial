@@ -14,7 +14,11 @@ CREATE TABLE books (
     published DATE,
     in_stock  BOOLEAN NOT NULL DEFAULT true
 );
-\d books
+SELECT column_name, data_type, character_maximum_length AS max_len,
+       is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'books'
+ORDER BY ordinal_position;
 
 -- @ex 02-Q2 회원(book_members)과 대출(loans) 테이블을 만들고 loans 가 books, book_members 를 참조하도록 외래 키를 거세요 (대출일 기본값 오늘)
 CREATE TABLE book_members (

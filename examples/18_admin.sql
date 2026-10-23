@@ -80,7 +80,8 @@ WHERE query ILIKE 'select%orders%'
 ORDER BY total_exec_time DESC
 LIMIT 3;
 
--- @ex 18-10 데이터 내보내기/가져오기 - \copy (CSV)
+-- @ex 18-10 [psql 전용] 데이터 내보내기/가져오기 - \copy (CSV)
+-- DBeaver: 결과 그리드/테이블 우클릭 → Export Data / Import Data 마법사 (교안 참고)
 \copy (SELECT customer_id, name, city, grade FROM customers ORDER BY customer_id) TO 'customers_export.csv' WITH (FORMAT csv, HEADER)
 CREATE TABLE customers_import (customer_id INT, name TEXT, city TEXT, grade TEXT);
 \copy customers_import FROM 'customers_export.csv' WITH (FORMAT csv, HEADER)

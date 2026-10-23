@@ -11,7 +11,12 @@ CREATE TABLE notices (
     title   VARCHAR(100),
     content TEXT
 );
-\d notices
+-- 구조 확인 (psql 에서는 \d notices)
+SELECT column_name, data_type, character_maximum_length AS max_len,
+       is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'notices'
+ORDER BY ordinal_position;
 
 -- @ex 02-02 자주 쓰는 자료형 맛보기
 CREATE TABLE typetest (
@@ -93,7 +98,11 @@ ALTER TABLE notices ALTER COLUMN title TYPE VARCHAR(200);
 ALTER TABLE notices ADD PRIMARY KEY (id);
 ALTER TABLE notices RENAME COLUMN content TO body;
 ALTER TABLE notices DROP COLUMN created_at;
-\d notices
+SELECT column_name, data_type, character_maximum_length AS max_len,
+       is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'notices'
+ORDER BY ordinal_position;
 
 -- @ex 02-11 제약 조건에 이름 붙이고 추가/삭제하기
 ALTER TABLE members ADD CONSTRAINT chk_members_level

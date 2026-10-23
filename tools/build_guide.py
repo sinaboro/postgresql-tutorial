@@ -322,7 +322,7 @@ class GuideDoc(BaseDocTemplate):
         c.setFont("Body", 10.5)
         c.setFillColor(colors.HexColor("#374151"))
         c.drawString(MARGIN + 4, 60 * mm, f"작성일  {date.today():%Y.%m.%d}")
-        c.drawString(MARGIN + 4, 52 * mm, "실습 환경  PostgreSQL 18 (17 이상 권장) · psql · pgAdmin 4 / DBeaver")
+        c.drawString(MARGIN + 4, 52 * mm, "실습 환경  PostgreSQL 18 (17 이상 권장) · DBeaver Community · psql")
         c.drawString(MARGIN + 4, 44 * mm, f"예제 저장소  https://{REPO}")
         c.setFont("Body", 8.5)
         c.setFillColor(GREY)

@@ -26,7 +26,6 @@ BEGIN
       INTO v_total
     FROM orders o JOIN order_items oi ON o.order_id = oi.order_id
     WHERE o.customer_id = p_customer_id AND o.status <> 'CANCELLED';
-
     IF v_total >= 10000000 THEN
         RETURN 'VIP';
     ELSIF v_total >= 5000000 THEN
@@ -94,7 +93,6 @@ BEGIN
     SELECT stock, price INTO v_stock, v_price
     FROM products WHERE product_id = p_product
     FOR UPDATE;                                   -- 동시 주문 대비 잠금
-
     IF NOT FOUND THEN
         RAISE EXCEPTION '상품 %이(가) 없습니다', p_product;
     END IF;
@@ -102,11 +100,9 @@ BEGIN
         RAISE EXCEPTION '재고 부족: 요청 %개, 재고 %개', p_qty, v_stock
               USING HINT = '수량을 줄여 다시 주문하세요';
     END IF;
-
     INSERT INTO orders (customer_id, order_date, status, ship_city)
     SELECT p_customer, now(), 'PAID', city FROM customers WHERE customer_id = p_customer
     RETURNING order_id INTO v_order;
-
     INSERT INTO order_items VALUES (v_order, p_product, p_qty, v_price);
     UPDATE products SET stock = stock - p_qty WHERE product_id = p_product;
     RETURN v_order;

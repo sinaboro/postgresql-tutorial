@@ -90,4 +90,8 @@ CREATE TABLE model.customer_profile (
     address     TEXT,
     marketing_agree BOOLEAN NOT NULL DEFAULT false
 );
-\d model.customer_profile
+SELECT column_name, data_type, character_maximum_length AS max_len,
+       is_nullable, column_default
+FROM information_schema.columns
+WHERE table_schema = 'model' AND table_name = 'customer_profile'
+ORDER BY ordinal_position;

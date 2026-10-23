@@ -14,11 +14,20 @@ SELECT 1 + 2 AS 더하기,
        2 ^ 10 AS 거듭제곱,
        'Postgre' || 'SQL' AS 문자열연결;
 
--- @ex 01-03 psql 메타 명령: 테이블 목록 (\dt)
-\dt
+-- @ex 01-03 테이블 목록 보기 (psql 에서는 \dt)
+-- DBeaver: 왼쪽 Database Navigator 에서 shop > Schemas > public > Tables
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY table_name;
 
--- @ex 01-04 psql 메타 명령: 테이블 구조 보기 (\d 테이블명)
-\d departments
+-- @ex 01-04 테이블 구조 보기 (psql 에서는 \d departments)
+-- DBeaver: 테이블을 더블클릭 → Properties(컬럼) / DDL 탭
+SELECT column_name, data_type, character_maximum_length AS max_len,
+       is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name = 'departments'
+ORDER BY ordinal_position;
 
 -- @ex 01-05 첫 번째 SELECT - 부서 테이블 전체 조회
 SELECT * FROM departments;

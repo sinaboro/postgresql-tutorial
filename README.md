@@ -4,11 +4,20 @@ SQL 을 처음 배우는 사람을 위한 PostgreSQL 강의 자료입니다. 설
 
 - **강사**: 김대철
 - **교안(PDF)**: [`docs/PostgreSQL_강사용교안.pdf`](docs/PostgreSQL_강사용교안.pdf) (164쪽, 8일·64시간 과정 기준)
-- **실습 환경**: PostgreSQL 18 (17 이상이면 모든 예제 동작), psql, pgAdmin 4 또는 DBeaver, Python 3.10+
+- **실습 환경**: PostgreSQL 18 (17 이상이면 모든 예제 동작), **DBeaver Community**(수업 도구), psql, Python 3.10+
 
 교안에 실린 모든 실행 결과는 이 저장소의 예제를 PostgreSQL 18.6 에서 실제로 실행해 자동으로 넣은 것입니다.
 
 ## 빠른 시작
+
+**DBeaver** (수업 방식)
+
+1. DBeaver 에서 PostgreSQL 연결(localhost:5432, 사용자 postgres, Database `postgres`)을 만든다.
+2. `setup/00_create_database.sql` 을 열고 `Alt+X` 로 실행 → `shop` DB 생성.
+3. 편집기의 데이터베이스를 `shop` 으로 바꾸고 `setup/01_schema.sql`, `setup/02_seed.sql` 을 차례로 `Alt+X`.
+4. `examples/` 의 파일을 열어 `-- @ex` 블록을 선택하고 `Alt+X` 로 실행.
+
+**psql** (명령 프롬프트)
 
 ```bash
 git clone https://github.com/sinaboro/postgresql-tutorial.git
@@ -63,7 +72,7 @@ psql -U postgres -d shop -f examples/01_intro.sql
 | 19 | Python 으로 PostgreSQL 다루기 (psycopg 3, pandas) | [python/](python/) | 심화 |
 | 20 | 종합 프로젝트 - 쇼핑몰 매출 분석 리포트 | [20_project.sql](examples/20_project.sql) | 종합 |
 
-각 예제 파일은 `-- @ex 04-01 제목` 주석으로 나뉘어 있고, 교안의 예제 번호와 같습니다.
+각 예제 파일은 `-- @ex 04-01 제목` 주석으로 나뉘어 있고, 교안의 예제 번호와 같습니다. psql 메타 명령(`\d` 등)을 쓰지 않아 DBeaver 에서 그대로 실행됩니다(18장 `\copy` 예제만 psql 전용).
 
 ## 폴더 구조
 
