@@ -1,0 +1,43 @@
+# PostgreSQL 18 실습 환경
+#   시작 : docker compose up -d
+#   확인 : docker compose ps          (STATUS 가 healthy 이면 준비 완료)
+#   psql : docker exec -it pg-shop psql -U postgres -d shop
+#   중지 : docker compose stop        (데이터 유지)
+#   초기화: docker compose down -v && docker compose up -d   (볼륨 삭제 → shop DB 를 처음 상태로 다시 생성)
+#
+# 처음 시작할 때 setup/01_schema.sql, setup/02_seed.sql 이 자동 실행되어 shop DB 가 준비됩니다.
+# DBeaver 접속 정보: localhost / 5432 / shop / postgres / postgres
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: pg-shop
+    restart: unless-stopped
+    ports:
+      - "5432:5432"                 # PC 에 이미 PostgreSQL 이 있으면 "5433:5432" 로 바꾸고 DBeaver 에서 5433 사용
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres   # 실습용 비밀번호 (운영 환경에서는 절대 이렇게 쓰지 않음)
+      POSTGRES_DB: shop
+      TZ: Asia/Seoul
+      # 한국어 정렬(ICU ko-KR), 문자 분류는 en_US.UTF-8 (pg_trgm 이 한글을 글자로 인식)
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8 --locale-provider=icu --icu-locale=ko-KR"
+    command:
+      - postgres
+      - -c
+      - timezone=Asia/Seoul
+      - -c
+      - shared_preload_libraries=pg_stat_statements   # 18장 pg_stat_statements 실습용
+    volumes:
+      - pgdata:/var/lib/postgresql                    # 18 버전 이미지는 이 경로를 마운트
+      - ./setup/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./setup/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./work:/work                                  # 18장 백업 파일, CSV 를 PC 와 주고받는 폴더
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shop"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

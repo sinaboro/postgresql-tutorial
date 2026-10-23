@@ -5,3 +5,7 @@
 !docs/**/*.png
 __pycache__/
 .venv/
+
+# Docker 와 주고받는 작업 폴더
+work/*
+!work/.gitkeep

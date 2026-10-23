@@ -1,10 +1,4 @@
-# 부록 A ∙ 실습 문제 정답
-
-정답 SQL 은 `solutions/` 폴더에 있고, 아래 실행 결과는 각 정답 파일을 새로 초기화한 shop DB 에서 순서대로 실행한 것입니다. 앞 문제에서 만든 테이블을 뒤 문제에서 쓰는 경우가 있으므로 같은 파일 안에서는 순서대로 실행하세요. 정답은 하나가 아닙니다. 결과가 같다면 다른 풀이도 정답으로 인정하고, 서로의 풀이를 비교해 보게 하세요.
-
-@@answers
-
-# 부록 B ∙ 빠른 참조
+# 부록 ∙ 빠른 참조
 
 ## SQL 문법 요약
 
@@ -39,10 +33,12 @@
 | `operator does not exist: integer \|\| integer` 등 | 자료형 불일치 | `::text` 등 형변환 |
 | `division by zero` | 0 으로 나눔 | `NULLIF(분모, 0)` |
 | `permission denied for table` | 권한 없음 (17장) | GRANT, 스키마 USAGE 확인 |
-| `password authentication failed` | 비밀번호 오류, pg_hba.conf | 1장 설치 문제 해결 참고 |
-| `could not connect to server` | 서비스 중지, 포트 오류 | 서비스(services.msc) 실행, 포트 확인 |
+| `password authentication failed` | 비밀번호 오류 | 실습 서버 비밀번호는 `postgres` (`docker-compose.yml`) |
+| `Connection refused` / `could not connect to server` | 서버(컨테이너) 중지, 포트 오류 | Docker Desktop 실행, `docker compose ps` 로 상태 확인, 포트 확인 (1장) |
 
 ## psql 메타 명령
+
+실습 서버의 psql 은 `docker exec -it pg-shop psql -U postgres -d shop` 으로 실행합니다. DBeaver 에서 같은 일을 하는 방법은 1장의 대응표를 참고하세요.
 
 | 명령 | 의미 | 명령 | 의미 |
 |---|---|---|---|
@@ -55,17 +51,3 @@
 | `\i 파일` | 파일 실행 | `\o 파일` | 출력을 파일로 |
 | `\copy` | CSV 입출력 (18장) | `\e` | 편집기 |
 | `\conninfo` | 접속 정보 | `\q` | 종료 |
-
-## 교안 재생성 방법 (강사용)
-
-예제나 샘플 데이터를 고친 뒤에는 다음 순서로 검증하고 이 PDF 를 다시 만들 수 있습니다. 모든 실행 결과가 새로 채워집니다.
-
-```
-set PGHOST=localhost
-set PGUSER=postgres
-set PGPASSWORD=비밀번호
-python tools/gen_seed.py          (샘플 데이터를 바꿨을 때만)
-python tools/verify.py            (모든 예제·정답이 예상대로 실행되는지 검사)
-python tools/make_exercises.py    (정답 파일에서 문제지 생성)
-python tools/build_guide.py       (docs/PostgreSQL_강사용교안.pdf 생성)
-```

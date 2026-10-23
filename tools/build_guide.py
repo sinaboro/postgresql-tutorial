@@ -1,7 +1,7 @@
-"""강사용 교안 PDF 빌더.
+"""학습 교안 PDF 빌더.
 
 docs/guide/*.md 원고를 읽고, 원고 속 지시어(@@ex 등)가 가리키는 예제를 실제 PostgreSQL 에서
-실행해 그 출력을 그대로 넣어 docs/PostgreSQL_강사용교안.pdf 를 만든다.
+실행해 그 출력을 그대로 넣어 docs/PostgreSQL_학습교안.pdf 를 만든다.
 
     python tools/build_guide.py
 
@@ -13,12 +13,12 @@ docs/guide/*.md 원고를 읽고, 원고 속 지시어(@@ex 등)가 가리키는
 
 원고 문법 (마크다운의 일부 + 지시어)
   # 장 제목 / ## 절 / ### 소절, 문단, - 목록, 1. 번호 목록, | 표 |, ``` 코드 ```
-  > [!TEACH] 제목   강사 노트 상자 (TIP, WARN, NOTE 도 가능), 이어지는 '> ' 줄이 본문
+  > [!POINT] 제목   핵심 포인트 상자 (TIP, WARN, NOTE, QA 도 가능), 이어지는 '> ' 줄이 본문
   @@ex 04-01 04-02     예제 코드 + 실행 결과
   @@code 13-05         예제 코드만
   @@py python/01_connect.py   파이썬 코드 + 실행 결과
   @@q 04-Q1 04-Q2      실습 문제 목록 (정답은 부록)
-  @@answers            부록: 모든 실습 문제 정답과 실행 결과
+  @@answers            모든 실습 문제 정답과 실행 결과 (학습 교안에서는 사용하지 않음)
   @@image docs/images/erd.png 160   그림 (폭 mm)
   @@pagebreak
 """
@@ -48,7 +48,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import runner  # noqa: E402
 
 ROOT = runner.ROOT
-OUT = ROOT / "docs" / "PostgreSQL_강사용교안.pdf"
+OUT = ROOT / "docs" / "PostgreSQL_학습교안.pdf"
 TITLE = "PostgreSQL 데이터베이스"
 INSTRUCTOR = "김대철"
 REPO = "github.com/sinaboro/postgresql-tutorial"
@@ -78,11 +78,11 @@ CODE_BG = colors.HexColor("#f6f8fa")
 OUT_BG = colors.HexColor("#fbfbf3")
 GREY = colors.HexColor("#6b7280")
 BOX = {
-    "TEACH": ("강사 노트", colors.HexColor("#fff4e5"), colors.HexColor("#e8890c")),
+    "POINT": ("핵심 포인트", colors.HexColor("#fff4e5"), colors.HexColor("#e8890c")),
     "TIP":   ("TIP",      colors.HexColor("#e8f4fd"), colors.HexColor("#2b7bb9")),
     "WARN":  ("주의",     colors.HexColor("#fdecec"), colors.HexColor("#c0392b")),
     "NOTE":  ("참고",     colors.HexColor("#f2f2f2"), colors.HexColor("#7f8c8d")),
-    "QA":    ("예상 질문", colors.HexColor("#f0f7ee"), colors.HexColor("#3c8d2f")),
+    "QA":    ("Q&A", colors.HexColor("#f0f7ee"), colors.HexColor("#3c8d2f")),
 }
 
 S = {}
@@ -215,7 +215,7 @@ def md_table(rows):
     ncol = len(rows[0])
     widths = [max(disp_width(re.sub(r"[`*]", "", r[i])) if i < len(r) else 0 for r in rows) for i in range(ncol)]
     head = [disp_width(re.sub(r"[`*]", "", c)) for c in rows[0]]
-    widths = [min(max(w, h + 2, 5), 60) for w, h in zip(widths, head)]
+    widths = [min(max(w, h + 2, 5), 60) + 3 for w, h in zip(widths, head)]   # +3: 칸 여백
     total = sum(widths)
     colw = [TEXT_W * w / total for w in widths]
     data = [[Paragraph(inline(c), S["cellh"] if i == 0 else S["cell"]) for c in r]
@@ -258,7 +258,7 @@ class ChapterBanner(Flowable):
 class GuideDoc(BaseDocTemplate):
     def __init__(self, path):
         super().__init__(str(path), pagesize=A4, leftMargin=MARGIN, rightMargin=MARGIN,
-                         topMargin=MARGIN + 6, bottomMargin=MARGIN, title=f"{TITLE} 강사용 교안",
+                         topMargin=MARGIN + 6, bottomMargin=MARGIN, title=f"{TITLE} 학습 교안",
                          author=INSTRUCTOR, subject="PostgreSQL 기초부터 심화까지")
         frame = Frame(MARGIN, MARGIN, TEXT_W, PAGE_H - 2 * MARGIN - 6, id="f")
         self.addPageTemplates([PageTemplate("cover", [frame], onPage=self.cover),
@@ -287,7 +287,7 @@ class GuideDoc(BaseDocTemplate):
         c.setFont("Body", 7.5)
         c.setFillColor(GREY)
         c.drawString(MARGIN, PAGE_H - MARGIN + 2, self.chapter)
-        c.drawRightString(PAGE_W - MARGIN, PAGE_H - MARGIN + 2, f"{TITLE} ∙ 강사용 교안")
+        c.drawRightString(PAGE_W - MARGIN, PAGE_H - MARGIN + 2, TITLE)
         c.setStrokeColor(colors.HexColor("#d1d9e3"))
         c.setLineWidth(0.5)
         c.line(MARGIN, PAGE_H - MARGIN - 1, PAGE_W - MARGIN, PAGE_H - MARGIN - 1)
@@ -307,7 +307,7 @@ class GuideDoc(BaseDocTemplate):
         c.roundRect(MARGIN + 4, PAGE_H - 70 * mm, 34 * mm, 9 * mm, 3, fill=1, stroke=0)
         c.setFillColor(colors.white)
         c.setFont("BodyB", 11)
-        c.drawCentredString(MARGIN + 4 + 17 * mm, PAGE_H - 70 * mm + 3 * mm, "강사용 교안")
+        c.drawCentredString(MARGIN + 4 + 17 * mm, PAGE_H - 70 * mm + 3 * mm, "학습 교안")
         c.setFont("BodyB", 34)
         c.drawString(MARGIN + 4, PAGE_H - 95 * mm, "PostgreSQL")
         c.setFont("BodyB", 26)
@@ -322,12 +322,12 @@ class GuideDoc(BaseDocTemplate):
         c.setFont("Body", 10.5)
         c.setFillColor(colors.HexColor("#374151"))
         c.drawString(MARGIN + 4, 60 * mm, f"작성일  {date.today():%Y.%m.%d}")
-        c.drawString(MARGIN + 4, 52 * mm, "실습 환경  PostgreSQL 18 (17 이상 권장) · DBeaver Community · psql")
+        c.drawString(MARGIN + 4, 52 * mm, "실습 환경  PostgreSQL 18 (Docker) · DBeaver Community")
         c.drawString(MARGIN + 4, 44 * mm, f"예제 저장소  https://{REPO}")
         c.setFont("Body", 8.5)
         c.setFillColor(GREY)
         c.drawString(MARGIN + 4, 28 * mm,
-                     "이 교안의 모든 '실행 결과'는 저장소의 예제 SQL 을 PostgreSQL 18.6 에서 실제로 실행해 자동으로 넣은 것입니다.")
+                     "이 교재의 모든 '실행 결과'는 저장소의 예제 SQL 을 PostgreSQL 18 에서 실제로 실행해 넣은 것입니다.")
         c.restoreState()
 
 
@@ -406,7 +406,7 @@ class Builder:
                                        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f0f7ee")]),
                                        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#c8dcc2")),
                                        ("VALIGN", (0, 0), (-1, -1), "MIDDLE")]))
-                flow += [t, Paragraph("정답과 실행 결과는 <b>부록 A</b>, 문제지 파일은 <font name='Mono'>exercises/</font> 폴더에 있습니다.", S["small"]), Spacer(1, 6)]
+                flow += [t, Paragraph("문제지는 저장소의 <font name='Mono'>exercises/</font>, 정답은 <font name='Mono'>solutions/</font> 폴더에 있습니다. 먼저 직접 풀어 본 뒤 확인하세요.", S["small"]), Spacer(1, 6)]
             elif s == "@@answers":
                 cur = None
                 for bid in self.sol_order:

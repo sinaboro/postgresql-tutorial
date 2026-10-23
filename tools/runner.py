@@ -43,9 +43,13 @@ def reset_db():
     """shop 데이터베이스를 지우고 스키마 + 샘플 데이터를 새로 넣는다."""
     psql(["-q", "-c", f"DROP DATABASE IF EXISTS {DB} WITH (FORCE)"], db="postgres")
     create = f"CREATE DATABASE {DB}"
-    if os.environ.get("SHOP_LOCALE"):     # 예: Korean_Korea.949 (한국어 Windows 설치 기본값과 동일하게)
-        create += (f" TEMPLATE template0 ENCODING 'UTF8' LOCALE_PROVIDER libc"
-                   f" LOCALE '{os.environ['SHOP_LOCALE']}'")
+    if os.environ.get("SHOP_LOCALE"):     # 예: Korean_Korea.949 (문자 분류용 libc 로케일)
+        create += f" TEMPLATE template0 ENCODING 'UTF8' LOCALE '{os.environ['SHOP_LOCALE']}'"
+        # docker-compose.yml 과 같은 ICU ko-KR 정렬 (SHOP_ICU=ko-KR)
+        if os.environ.get("SHOP_ICU"):
+            create += f" LOCALE_PROVIDER icu ICU_LOCALE '{os.environ['SHOP_ICU']}'"
+        else:
+            create += " LOCALE_PROVIDER libc"
     psql(["-q", "-c", create], db="postgres")
     # 교안의 시간 출력이 한국 시간 기준이 되도록 (설치 시 기본값도 보통 Asia/Seoul)
     psql(["-q", "-c", f"ALTER DATABASE {DB} SET timezone = 'Asia/Seoul'"], db="postgres")
